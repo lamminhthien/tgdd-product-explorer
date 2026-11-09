@@ -1,0 +1,16 @@
+{
+ "code": 0,
+ "messageTitle": "",
+ "message": "",
+ "errormessage": "",
+ "data": {
+  "total": 0,
+  "totalImage": 0,
+  "ratingImages": []
+ },
+ "serverName": "tmdt-catalog-busapi-u22-90-182",
+ "sessionId": "",
+ "externalmessage": "",
+ "requestId": "",
+ "serverTime": "2026-11-09T15:17:56.228736+07:00"
+}

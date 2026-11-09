@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TGDD Product Explorer</title>
+<style>
+  :root {
+    --bg: #f5f6f8; --card: #ffffff; --text: #1d1d1f; --muted: #6e6e73;
+    --line: #e5e5ea; --accent: #0071e3; --star: #f5a623; --danger: #d70015;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+         background: var(--bg); color: var(--text); }
+  header { background: var(--card); border-bottom: 1px solid var(--line); padding: 16px; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 18px; margin: 0 0 12px; }
+  form { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; }
+  label { display: flex; flex-direction: column; font-size: 12px; color: var(--muted); gap: 4px; }
+  input, select, button { font: inherit; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+  input[type=text], input[type=number] { width: 150px; }
+  button { background: var(--accent); color: #fff; border: none; cursor: pointer; }
+  button.ghost { background: #fff; color: var(--text); border: 1px solid var(--line); }
+  button:disabled { opacity: .5; cursor: default; }
+  .tabs { display: flex; gap: 4px; margin: 16px 0; }
+  .tab { background: transparent; color: var(--muted); border-radius: 8px 8px 0 0; }
+  .tab.active { background: var(--card); color: var(--text); font-weight: 600; }
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .hidden { display: none !important; }
+  .status { color: var(--muted); padding: 8px 0; }
+  .error { color: var(--danger); padding: 8px 0; white-space: pre-wrap; }
+  .hero { display: grid; grid-template-columns: 220px 1fr; gap: 20px; }
+  .hero img { width: 100%; border-radius: 8px; background: #fafafa; }
+  .price { font-size: 22px; font-weight: 700; color: var(--danger); }
+  .old { text-decoration: line-through; color: var(--muted); margin-left: 8px; }
+  .badge { display: inline-block; background: #e8f5e9; color: #1b5e20; padding: 2px 8px; border-radius: 999px; font-size: 12px; }
+  .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; margin-top: 16px; }
+  .gallery img { width: 100%; border-radius: 8px; border: 1px solid var(--line); }
+  h2 { font-size: 16px; margin: 24px 0 8px; }
+  table { width: 100%; border-collapse: collapse; }
+  td { border-bottom: 1px solid var(--line); padding: 6px 8px; vertical-align: top; }
+  td.k { color: var(--muted); width: 38%; }
+  .group { font-weight: 600; background: #fafafa; }
+  .articles img { max-width: 100%; height: auto; }
+  .articles { overflow-x: auto; }
+  .summary { display: grid; grid-template-columns: 180px 1fr; gap: 24px; align-items: center; }
+  .big { font-size: 40px; font-weight: 700; }
+  .stars { color: var(--star); letter-spacing: 1px; }
+  .bar { display: grid; grid-template-columns: 22px 1fr 48px; gap: 8px; align-items: center; font-size: 12px; margin: 4px 0; }
+  .bar div:nth-child(2) { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+  .bar span { display: block; height: 100%; background: var(--star); }
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; align-items: center; }
+  .review { border-top: 1px solid var(--line); padding: 12px 0; }
+  .review:first-child { border-top: none; }
+  .meta { color: var(--muted); font-size: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .reply { background: #f5f5f7; border-radius: 8px; padding: 8px; margin-top: 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .chip { background: #fff; color: var(--text); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; font-size: 13px; }
+  .chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+  .product-card { text-align: left; background: var(--card); color: var(--text); border: 1px solid var(--line);
+                  border-radius: 12px; padding: 10px; display: flex; flex-direction: column; gap: 4px; }
+  .product-card:hover { border-color: var(--accent); }
+  .product-card img { width: 100%; aspect-ratio: 1; object-fit: contain; background: #fafafa; border-radius: 8px; }
+  .product-card .pname { font-weight: 600; font-size: 13px; }
+  .product-card .price { font-size: 15px; }
+  .product-card .meta { font-size: 12px; }
+  @media (max-width: 640px) {
+    .hero, .summary { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap" style="padding:0">
+    <h1>TGDD Product Explorer · Chi tiết sản phẩm &amp; đánh giá</h1>
+    <form id="search">
+      <label>Product code
+        <input type="text" id="productCode" value="0131491005165">
+      </label>
+      <label>Model code
+        <input type="text" id="modelCode" value="201336">
+      </label>
+      <label>Seller ID
+        <input type="number" id="sellerId" value="1" style="width:90px">
+      </label>
+      <label>Province ID
+        <input type="number" id="provinceId" value="1027" style="width:90px">
+      </label>
+      <label>Nguồn dữ liệu
+        <select id="source">
+          <option value="live">Live (qua server.py)</option>
+          <option value="har">Dữ liệu đã lưu từ HAR</option>
+        </select>
+      </label>
+      <button type="submit" id="loadBtn">Tải dữ liệu</button>
+    </form>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="tabs">
+    <button class="tab active" data-tab="list">Danh sách sản phẩm</button>
+    <button class="tab" data-tab="detail">Chi tiết sản phẩm</button>
+    <button class="tab" data-tab="reviews">Đánh giá</button>
+  </div>
+
+  <div id="status" class="status"></div>
+  <div id="error" class="error hidden"></div>
+
+  <!-- Danh sách sản phẩm -->
+  <section id="list" class="panel">
+    <div class="filters">
+      <input type="text" id="nameFilter" placeholder="Tìm theo tên sản phẩm" style="width:260px">
+      <button class="ghost" id="reloadList">Tải lại</button>
+      <span class="meta" id="listInfo"></span>
+    </div>
+    <div id="brandChips" class="chips"></div>
+    <div id="productGrid" class="product-grid"></div>
+    <div style="margin-top:12px">
+      <button class="ghost" id="loadMoreProducts">Tải thêm sản phẩm</button>
+    </div>
+  </section>
+
+  <!-- Chi tiết -->
+  <section id="detail" class="panel hidden">
+    <div class="hero">
+      <img id="thumb" alt="">
+      <div>
+        <div id="name" style="font-size:20px;font-weight:600"></div>
+        <div style="margin:8px 0">
+          <span class="price" id="price"></span><span class="old" id="oldPrice"></span>
+          <span class="badge" id="percent"></span>
+        </div>
+        <div id="warranty" class="meta"></div>
+        <div id="meta" class="meta" style="margin-top:8px"></div>
+        <p><a id="detailUrl" href="#" target="_blank" rel="noopener">Xem trên thegioididong.com ↗</a></p>
+      </div>
+    </div>
+
+    <h2>Hình ảnh</h2>
+    <div id="gallery" class="gallery"></div>
+
+    <h2>Thông số kỹ thuật</h2>
+    <table id="specs"></table>
+
+    <h2>Bài viết mô tả</h2>
+    <div id="articles" class="articles"></div>
+  </section>
+
+  <!-- Đánh giá -->
+  <section id="reviews" class="panel hidden">
+    <div class="summary">
+      <div>
+        <div class="big" id="avgScore">–</div>
+        <div class="stars" id="avgStars"></div>
+        <div class="meta" id="totalRating"></div>
+      </div>
+      <div id="bars"></div>
+    </div>
+
+    <div class="filters">
+      <label style="flex-direction:row;gap:6px;align-items:center;color:var(--text)">
+        Số sao
+        <select id="score">
+          <option value="0">Tất cả</option>
+          <option value="5">5 sao</option><option value="4">4 sao</option>
+          <option value="3">3 sao</option><option value="2">2 sao</option><option value="1">1 sao</option>
+        </select>
+      </label>
+      <label style="flex-direction:row;gap:6px;align-items:center;color:var(--text)">
+        <input type="checkbox" id="hasImage"> Chỉ đánh giá có ảnh
+      </label>
+      <label style="flex-direction:row;gap:6px;align-items:center;color:var(--text)">
+        Sắp xếp
+        <select id="orderBy">
+          <option value="1">Mới nhất</option>
+          <option value="2">Hữu ích nhất</option>
+        </select>
+      </label>
+      <button class="ghost" id="applyFilters">Áp dụng</button>
+      <span class="meta" id="imageCount"></span>
+    </div>
+
+    <div id="reviewList"></div>
+    <div style="margin-top:12px">
+      <button class="ghost" id="loadMore">Tải thêm đánh giá</button>
+    </div>
+  </section>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const fmtVND = (n) => (n || 0).toLocaleString('vi-VN') + ' ₫';
+const fmtDate = (s) => s ? new Date(s).toLocaleDateString('vi-VN') : '';
+const PAGE_SIZE = 10;
+
+const state = { reviewPage: 0, reviewsLoaded: 0, reviewTotal: 0, busy: false };
+
+// ---------- Data access: live proxy or HAR fixtures ----------
+const HAR_FILES = {
+  'Product/GetProductExtend': 'data/product-extend.json',
+  'Product/GetGalleryProduct': 'data/gallery.json',
+  'Product/GetOldProductInfo': 'data/old-product-info.json',
+  'Comment/Product/Code': 'data/comments.json',
+  'Comment/GetComentImages': 'data/comment-images.json',
+  'Cate/GetproductCateV2': 'data/product-list.json',
+};
+
+async function callApi(endpoint, { method = 'GET', query = {}, body } = {}) {
+  if ($('source').value === 'har') {
+    // HAR fixtures are static snapshots: filters and paging do not change them.
+    const res = await fetch(HAR_FILES[endpoint]);
+    if (!res.ok) throw new Error('Không đọc được ' + HAR_FILES[endpoint]);
+    return res.json();
+  }
+  const qs = new URLSearchParams(query).toString();
+  const url = `/api/tgdd/${endpoint}${qs ? '?' + qs : ''}`;
+  const res = await fetch(url, {
+    method,
+    headers: method === 'POST' ? { 'Content-Type': 'application/json' } : {},
+    body: method === 'POST' ? JSON.stringify(body) : undefined,
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(`${endpoint}: HTTP ${res.status} ${json.error || ''}`);
+  if (json.code !== 0) throw new Error(`${endpoint}: code ${json.code} ${json.message || json.errormessage || ''}`);
+  return json;
+}
+
+function setStatus(text) { $('status').textContent = text; }
+function setError(text) { $('error').textContent = text; $('error').classList.toggle('hidden', !text); }
+
+// ---------- Tabs ----------
+document.querySelectorAll('.tab').forEach((btn) => btn.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach((b) => b.classList.toggle('active', b === btn));
+  ['list', 'detail', 'reviews'].forEach((id) => $(id).classList.toggle('hidden', btn.dataset.tab !== id));
+}));
+
+// ---------- Chi tiết sản phẩm ----------
+// productArticles là HTML từ API: bỏ script, iframe và thuộc tính on* trước khi hiển thị.
+function sanitize(html) {
+  const doc = new DOMParser().parseFromString(html || '', 'text/html');
+  doc.querySelectorAll('script,iframe,object,embed,link,meta').forEach((n) => n.remove());
+  doc.querySelectorAll('*').forEach((el) => {
+    [...el.attributes].forEach((a) => {
+      if (a.name.startsWith('on')) el.removeAttribute(a.name);
+      if (['href', 'src'].includes(a.name) && /^\s*javascript:/i.test(a.value)) el.removeAttribute(a.name);
+    });
+  });
+  return doc.body.innerHTML;
+}
+
+function renderSpecs(templates) {
+  const rows = [];
+  (templates || []).forEach((g) => {
+    rows.push(`<tr class="group"><td colspan="2">${escapeHtml(g.groupName)}</td></tr>`);
+    (g.propertyList || []).forEach((p) => {
+      const value = (p.valueList || []).map((v) => v.name).join(', ');
+      rows.push(`<tr><td class="k">${escapeHtml(p.label)}</td><td>${escapeHtml(value)}</td></tr>`);
+    });
+  });
+  $('specs').innerHTML = rows.join('') || '<tr><td>Không có thông số</td></tr>';
+}
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+async function loadDetail(productCode, modelCode, sellerId, provinceId) {
+  const [info, extend, gallery] = await Promise.all([
+    callApi('Product/GetOldProductInfo', {
+      method: 'POST', body: { productCode, provinceId },
+    }),
+    callApi('Product/GetProductExtend', {
+      query: { modelCode, productCode, sellerId, provinceId, districtId: 0, wardId: 0 },
+    }),
+    callApi('Product/GetGalleryProduct', {
+      query: { productCode, modelCode, provinceId, districtId: 0, wardId: 0, SellerId: sellerId },
+    }),
+  ]);
+
+  const p = info.data || {};
+  $('thumb').src = p.thumbnail || '';
+  $('name').textContent = p.productName || '';
+  $('price').textContent = p.price ? fmtVND(p.price) : '';
+  $('oldPrice').textContent = '';
+  $('percent').textContent = p.percent ? `${p.percent}%` : '';
+  $('warranty').textContent = p.warrantyInfo || '';
+  $('detailUrl').href = p.detailUrl || '#';
+
+  const ext = extend.data || {};
+  $('articles').innerHTML = sanitize(ext.productArticles);
+  renderSpecs(ext.specificationTemplate);
+
+  const images = (gallery.data || []).flatMap((g) => g.lstItem || []);
+  $('gallery').innerHTML = images.map((i) => `<img loading="lazy" src="${escapeHtml(i.url)}" alt="">`).join('');
+  $('meta').innerHTML = `<span>Product code: ${escapeHtml(productCode)}</span><span>Model: ${escapeHtml(modelCode)}</span>`;
+}
+
+// ---------- Đánh giá ----------
+function stars(n) {
+  const full = Math.round(n || 0);
+  return '★'.repeat(full) + '☆'.repeat(Math.max(0, 5 - full));
+}
+
+function renderSummary(sta) {
+  if (!sta) return;
+  $('avgScore').textContent = sta.scoreRating?.toFixed(1) ?? '–';
+  $('avgStars').textContent = stars(sta.scoreRating);
+  $('totalRating').textContent = `${(sta.totalRating || 0).toLocaleString('vi-VN')} đánh giá`;
+  const rows = [5, 4, 3, 2, 1].map((s) => {
+    const pct = sta[`score${s}Percentage`] || 0;
+    return `<div class="bar"><span>${s}★</span><div><span style="width:${pct}%"></span></div><span>${pct.toFixed(0)}%</span></div>`;
+  });
+  $('bars').innerHTML = rows.join('');
+}
+
+function renderComment(c) {
+  const reply = c.responseContent
+    ? `<div class="reply"><strong>Phản hồi từ cửa hàng:</strong> ${escapeHtml(c.responseContent)}</div>` : '';
+  const attached = (c.commentAttachedFileBOList || []).length;
+  return `
+    <div class="review">
+      <div><strong>${escapeHtml(c.isAnonymous ? 'Khách ẩn danh' : c.fullName)}</strong>
+        <span class="stars">${stars(c.score)}</span></div>
+      <div class="meta">
+        <span>${fmtDate(c.createdDate)}</span>
+        ${c.hasRecommendProduct ? '<span class="badge">Có giới thiệu sản phẩm</span>' : ''}
+        ${c.deliveryDate ? `<span>Nhận hàng: ${fmtDate(c.deliveryDate)}</span>` : ''}
+        ${attached ? `<span>${attached} ảnh/video đính kèm</span>` : ''}
+        <span>Mã SP: ${escapeHtml(c.productCode)}</span>
+        <span>👍 ${c.likeCount}</span>
+      </div>
+      <p style="margin:6px 0 0">${escapeHtml(c.content)}</p>
+      ${reply}
+    </div>`;
+}
+
+async function fetchReviewPage(modelCode, page) {
+  const filters = {
+    pageIndex: page,
+    pageSize: PAGE_SIZE,
+    variantCode: '',
+    productCode: '',
+    score: Number($('score').value),
+    orderBy: Number($('orderBy').value),
+    hasImage: $('hasImage').checked ? 1 : 0,
+    modelCode,
+  };
+  return callApi('Comment/Product/Code', { method: 'POST', body: filters });
+}
+
+async function loadReviews(modelCode, reset) {
+  if (state.busy) return;
+  state.busy = true;
+  $('loadMore').disabled = true;
+  try {
+    if (reset) {
+      state.reviewPage = 0;
+      state.reviewsLoaded = 0;
+      $('reviewList').innerHTML = '';
+    }
+    const data = (await fetchReviewPage(modelCode, state.reviewPage)).data || {};
+    renderSummary(data.commentSta);
+    state.reviewTotal = data.total || 0;
+    const comments = data.comments || [];
+    $('reviewList').insertAdjacentHTML('beforeend', comments.map(renderComment).join(''));
+    state.reviewsLoaded += comments.length;
+    state.reviewPage += 1;
+    $('loadMore').disabled = state.reviewsLoaded >= state.reviewTotal || comments.length === 0;
+    $('loadMore').textContent = `Tải thêm (${state.reviewsLoaded}/${state.reviewTotal})`;
+    if (reset && comments.length === 0) $('reviewList').innerHTML = '<p class="meta">Chưa có đánh giá phù hợp bộ lọc.</p>';
+  } finally {
+    state.busy = false;
+  }
+}
+
+async function loadImageCount(modelCode, productCode, sellerId, provinceId) {
+  try {
+    const res = await callApi('Comment/GetComentImages', {
+      query: { pageIndex: 0, pageSize: 10, score: 0, modelCode },
+    });
+    $('imageCount').textContent = `${res.data?.totalImage ?? 0} ảnh đánh giá từ khách hàng`;
+  } catch {
+    $('imageCount').textContent = '';
+  }
+}
+
+// ---------- Danh sách sản phẩm (điện thoại, danh mục cateId 13) ----------
+const LIST_PAGE_SIZE = 20;
+const list = { page: 0, products: [], seen: new Set(), brand: '', done: false };
+let listBusy = false;
+
+// Bỏ dấu tiếng Việt để tìm kiếm không phân biệt dấu.
+function normalize(s) {
+  return String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase();
+}
+
+async function loadProducts(reset) {
+  if (listBusy || (list.done && !reset)) return;
+  listBusy = true;
+  try {
+    if (reset) Object.assign(list, { page: 0, products: [], seen: new Set(), brand: '', done: false });
+    if ($('source').value === 'har' && list.page > 0) {
+      list.done = true; // Fixture HAR chỉ có một trang.
+    } else {
+      const res = await callApi('Cate/GetproductCateV2', {
+        method: 'POST',
+        body: {
+          pageIndex: list.page + 1, pageSize: LIST_PAGE_SIZE, provinceId: Number($('provinceId').value),
+          urlCate: 'dtdd', cateId: '13', filters: [],
+        },
+      });
+      const items = res.data?.products || [];
+      list.page += 1;
+      items.forEach((p) => {
+        if (!list.seen.has(p.productCode)) { list.seen.add(p.productCode); list.products.push(p); }
+      });
+      list.done = items.length === 0; // Thứ tự phân trang không ổn định, nên loại trùng theo productCode.
+    }
+    renderBrandChips();
+    renderProductGrid();
+    $('listInfo').textContent = `Đã tải ${list.products.length} sản phẩm${list.done ? ' (hết)' : ''}`;
+  } catch (err) {
+    setError(`Lỗi danh sách sản phẩm: ${err.message}`);
+  } finally {
+    listBusy = false;
+    $('loadMoreProducts').disabled = list.done;
+  }
+}
+
+function renderBrandChips() {
+  const counts = new Map();
+  list.products.forEach((p) => {
+    const b = p.brand || {};
+    if (!b.brandCode) return;
+    const cur = counts.get(b.brandCode) || { name: b.brandName, count: 0 };
+    cur.count += 1;
+    counts.set(b.brandCode, cur);
+  });
+  const chips = [`<button class="chip ${list.brand === '' ? 'active' : ''}" data-brand="">Tất cả (${list.products.length})</button>`];
+  [...counts.entries()].sort((a, b) => b[1].count - a[1].count).forEach(([code, b]) => {
+    chips.push(`<button class="chip ${list.brand === code ? 'active' : ''}" data-brand="${escapeHtml(code)}">${escapeHtml(b.name)} (${b.count})</button>`);
+  });
+  $('brandChips').innerHTML = chips.join('');
+}
+
+function renderProductGrid() {
+  const q = normalize($('nameFilter').value.trim());
+  const items = list.products.filter((p) =>
+    (!list.brand || p.brand?.brandCode === list.brand) && (!q || normalize(p.name).includes(q)));
+  $('productGrid').innerHTML = items.map((p) => {
+    const price = p.productPrices?.[0] || {};
+    return `
+      <button class="product-card" data-code="${escapeHtml(p.productCode)}" data-model="${escapeHtml(p.id)}">
+        <img loading="lazy" src="${escapeHtml(p.avatar)}" alt="">
+        <div class="pname">${escapeHtml(p.name)}</div>
+        <div class="price">${price.price ? fmtVND(price.price) : 'Chưa có giá'}</div>
+        ${price.sysPrice > price.price ? `<div class="old">${fmtVND(price.sysPrice)}</div>` : ''}
+        <div class="meta">★ ${p.rate ?? '–'} · ${escapeHtml(p.totalSold || '')}</div>
+      </button>`;
+  }).join('') || '<p class="meta">Không có sản phẩm phù hợp.</p>';
+}
+
+// ---------- Form ----------
+$('search').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const productCode = $('productCode').value.trim();
+  const modelCode = $('modelCode').value.trim();
+  const sellerId = $('sellerId').value;
+  const provinceId = $('provinceId').value;
+  $('loadBtn').disabled = true;
+  setError('');
+  setStatus('Đang tải...');
+  try {
+    await loadDetail(productCode, modelCode, sellerId, provinceId);
+    await loadReviews(modelCode, true);
+    loadImageCount(modelCode, productCode, sellerId, provinceId);
+    const note = $('source').value === 'har'
+      ? 'Đang dùng dữ liệu đã lưu từ HAR (chỉ có 2 đánh giá mẫu, bộ lọc không áp dụng).'
+      : `Đã tải lúc ${new Date().toLocaleTimeString('vi-VN')}.`;
+    setStatus(note);
+  } catch (err) {
+    setStatus('');
+    setError(`Lỗi: ${err.message}\n\nNếu API trả 403 hoặc không kết nối được, chọn "Dữ liệu đã lưu từ HAR" để xem demo.`);
+  } finally {
+    $('loadBtn').disabled = false;
+  }
+});
+
+$('applyFilters').addEventListener('click', () => loadReviews($('modelCode').value.trim(), true));
+$('loadMore').addEventListener('click', () => loadReviews($('modelCode').value.trim(), false));
+
+$('reloadList').addEventListener('click', () => loadProducts(true));
+$('loadMoreProducts').addEventListener('click', () => loadProducts(false));
+$('nameFilter').addEventListener('input', renderProductGrid);
+$('brandChips').addEventListener('click', (e) => {
+  const chip = e.target.closest('.chip');
+  if (!chip) return;
+  list.brand = chip.dataset.brand;
+  renderBrandChips();
+  renderProductGrid();
+});
+// Bấm sản phẩm: điền product/model code, mở tab chi tiết và tải dữ liệu.
+$('productGrid').addEventListener('click', (e) => {
+  const card = e.target.closest('.product-card');
+  if (!card) return;
+  $('productCode').value = card.dataset.code;
+  $('modelCode').value = card.dataset.model;
+  document.querySelector('.tab[data-tab="detail"]').click();
+  $('search').requestSubmit();
+});
+
+loadProducts(true);
+</script>
+</body>
+</html>

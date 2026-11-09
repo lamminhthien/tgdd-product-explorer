@@ -1,0 +1,361 @@
+{
+ "code": 0,
+ "messageTitle": "",
+ "message": "",
+ "errormessage": "",
+ "data": [
+  {
+   "productCode": "0131491005165",
+   "avatar": "https://cdnv2.tgdd.vn/pim/cdn/images/202610/samsung-galaxy-a37-5g-xanh-la-thumb215716.jpg",
+   "lstItem": [
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363401/samsung-galaxy-a37-green-1-639095993941860941.jpg"
+    },
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363401/samsung-galaxy-a37-green-2-639095993948274698.jpg"
+    },
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363401/samsung-galaxy-a37-green-3-639095993953833504.jpg"
+    },
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363401/samsung-galaxy-a37-green-4-639095993959696182.jpg"
+    },
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363401/samsung-galaxy-a37-green-5-639095993965328667.jpg"
+    },
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363401/samsung-galaxy-a37-tem-99-639104639251696878.jpg"
+    }
+   ],
+   "sliders": [
+    {
+     "fromDate": "2026-09-30T00:00:00+07:00",
+     "toDate": "2035-09-30T00:00:00+07:00",
+     "createdDate": "2026-10-01T12:56:20+07:00",
+     "updatedDate": "2026-10-01T12:56:20+07:00",
+     "linkYoutube": "",
+     "name": "samsung-galaxy-a37-6gb-128gb639134859387567256.jpg",
+     "url": "https://cdn.tgdd.vn/Products/Images/42/363401/Slider/samsung-galaxy-a37-6gb-128gb639134859387567256.jpg",
+     "displayOrder": 5
+    },
+    {
+     "fromDate": "2026-09-30T00:00:00+07:00",
+     "toDate": "2035-09-30T00:00:00+07:00",
+     "createdDate": "2026-10-01T12:56:20+07:00",
+     "updatedDate": "2026-10-01T12:56:20+07:00",
+     "linkYoutube": "",
+     "name": "samsung-galaxy-a37-6gb-128gb639134859369987242.jpg",
+     "url": "https://cdn.tgdd.vn/Products/Images/42/363401/Slider/samsung-galaxy-a37-6gb-128gb639134859369987242.jpg",
+     "displayOrder": 6
+    },
+    {
+     "fromDate": "2026-09-30T00:00:00+07:00",
+     "toDate": "2035-09-30T00:00:00+07:00",
+     "createdDate": "2026-10-01T12:56:20+07:00",
+     "updatedDate": "2026-10-01T12:56:20+07:00",
+     "linkYoutube": "",
+     "name": "samsung-galaxy-a37-6gb-128gb639134859392447477.jpg",
+     "url": "https://cdn.tgdd.vn/Products/Images/42/363401/Slider/samsung-galaxy-a37-6gb-128gb639134859392447477.jpg",
+     "displayOrder": 7
+    },
+    {
+     "fromDate": "2026-09-30T00:00:00+07:00",
+     "toDate": "2035-09-30T00:00:00+07:00",
+     "createdDate": "2026-10-01T12:56:20+07:00",
+     "updatedDate": "2026-10-01T12:56:20+07:00",
+     "linkYoutube": "",
+     "name": "samsung-galaxy-a37-6gb-128gb639134859375777428.jpg",
+     "url": "https://cdn.tgdd.vn/Products/Images/42/363401/Slider/samsung-galaxy-a37-6gb-128gb639134859375777428.jpg",
+     "displayOrder": 8
+    },
+    {
+     "fromDate": "2026-09-30T00:00:00+07:00",
+     "toDate": "2035-09-30T00:00:00+07:00",
+     "createdDate": "2026-10-01T12:56:20+07:00",
+     "updatedDate": "2026-10-01T12:56:20+07:00",
+     "linkYoutube": "",
+     "name": "samsung-galaxy-a37-6gb-128gb639134859380227308.jpg",
+     "url": "https://cdn.tgdd.vn/Products/Images/42/363401/Slider/samsung-galaxy-a37-6gb-128gb639134859380227308.jpg",
+     "displayOrder": 9
+    },
+    {
+     "fromDate": "2026-09-30T00:00:00+07:00",
+     "toDate": "2035-09-30T00:00:00+07:00",
+     "createdDate": "2026-10-01T12:56:20+07:00",
+     "updatedDate": "2026-10-01T12:56:20+07:00",
+     "linkYoutube": "",
+     "name": "samsung-galaxy-a37-6gb-128gb639134859382047312.jpg",
+     "url": "https://cdn.tgdd.vn/Products/Images/42/363401/Slider/samsung-galaxy-a37-6gb-128gb639134859382047312.jpg",
+     "displayOrder": 10
+    },
+    {
+     "fromDate": "2026-09-30T00:00:00+07:00",
+     "toDate": "2035-09-30T00:00:00+07:00",
+     "createdDate": "2026-10-01T12:56:20+07:00",
+     "updatedDate": "2026-10-01T12:56:20+07:00",
+     "linkYoutube": "",
+     "name": "samsung-galaxy-a37-6gb-128gb639134859398157361.jpg",
+     "url": "https://cdn.tgdd.vn/Products/Images/42/363401/Slider/samsung-galaxy-a37-6gb-128gb639134859398157361.jpg",
+     "displayOrder": 11
+    }
+   ],
+   "productVariantName": "6GB/128GB",
+   "supermarketGalleryList": [],
+   "superMarketVideo": ""
+  },
+  {
+   "productCode": "0131491005160",
+   "avatar": "https://cdnv2.tgdd.vn/pim/cdn/images/202610/samsung-galaxy-a37-5g-den-thumb215336.jpg",
+   "lstItem": [
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363400/samsung-galaxy-a37-black-1-639104639067649801.jpg"
+    },
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363400/samsung-galaxy-a37-black-2-639104639076261036.jpg"
+    },
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363400/samsung-galaxy-a37-black-3-639104639085541763.jpg"
+    },
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363400/samsung-galaxy-a37-black-4-639104639091547431.jpg"
+    },
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363400/samsung-galaxy-a37-black-5-639104639098029707.jpg"
+    },
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363400/samsung-galaxy-a37-black-6-639104639104656689.jpg"
+    },
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363400/samsung-galaxy-a37-black-7-639104639113097127.jpg"
+    },
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363400/samsung-galaxy-a37-black-8-639104639120674995.jpg"
+    },
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363400/samsung-galaxy-a37-black-9-639104639127310011.jpg"
+    },
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363400/samsung-galaxy-a37-black-10-639104639135002729.jpg"
+    },
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363400/samsung-galaxy-a37-black-11-639104639142782084.jpg"
+    },
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363400/samsung-galaxy-a37-black-12-639104639149472163.jpg"
+    },
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363400/samsung-galaxy-a37-tem-99-639104639156542002.jpg"
+    }
+   ],
+   "sliders": [
+    {
+     "fromDate": "2026-06-20T00:00:00+07:00",
+     "toDate": "2036-06-30T00:00:00+07:00",
+     "createdDate": "2026-06-22T22:46:45+07:00",
+     "updatedDate": "2026-06-22T22:46:45+07:00",
+     "linkYoutube": "",
+     "name": "samsung-galaxy-a37-8gb-128gb639134859951020066.jpg",
+     "url": "https://cdn.tgdd.vn/Products/Images/42/363400/Slider/samsung-galaxy-a37-8gb-128gb639134859951020066.jpg",
+     "displayOrder": 1
+    },
+    {
+     "fromDate": "2026-09-30T00:00:00+07:00",
+     "toDate": "2035-09-30T00:00:00+07:00",
+     "createdDate": "2026-10-01T12:56:20+07:00",
+     "updatedDate": "2026-10-01T12:56:20+07:00",
+     "linkYoutube": "",
+     "name": "samsung-galaxy-a37-8gb-128gb639134859951020066.jpg",
+     "url": "https://cdn.tgdd.vn/Products/Images/42/363400/Slider/samsung-galaxy-a37-8gb-128gb639134859951020066.jpg",
+     "displayOrder": 5
+    },
+    {
+     "fromDate": "2026-09-30T00:00:00+07:00",
+     "toDate": "2035-09-30T00:00:00+07:00",
+     "createdDate": "2026-10-01T12:56:20+07:00",
+     "updatedDate": "2026-10-01T12:56:20+07:00",
+     "linkYoutube": "",
+     "name": "samsung-galaxy-a37-8gb-128gb639134859956950085.jpg",
+     "url": "https://cdn.tgdd.vn/Products/Images/42/363400/Slider/samsung-galaxy-a37-8gb-128gb639134859956950085.jpg",
+     "displayOrder": 6
+    },
+    {
+     "fromDate": "2026-09-30T00:00:00+07:00",
+     "toDate": "2035-09-30T00:00:00+07:00",
+     "createdDate": "2026-10-01T12:56:20+07:00",
+     "updatedDate": "2026-10-01T12:56:20+07:00",
+     "linkYoutube": "",
+     "name": "samsung-galaxy-a37-8gb-128gb639134859957940005.jpg",
+     "url": "https://cdn.tgdd.vn/Products/Images/42/363400/Slider/samsung-galaxy-a37-8gb-128gb639134859957940005.jpg",
+     "displayOrder": 7
+    },
+    {
+     "fromDate": "2026-06-20T00:00:00+07:00",
+     "toDate": "2036-06-30T00:00:00+07:00",
+     "createdDate": "2026-06-22T22:46:45+07:00",
+     "updatedDate": "2026-06-22T22:46:45+07:00",
+     "linkYoutube": "",
+     "name": "samsung-galaxy-a37-8gb-128gb639134859969487264.jpg",
+     "url": "https://cdn.tgdd.vn/Products/Images/42/363400/Slider/samsung-galaxy-a37-8gb-128gb639134859969487264.jpg",
+     "displayOrder": 7
+    },
+    {
+     "fromDate": "2026-09-30T00:00:00+07:00",
+     "toDate": "2035-09-30T00:00:00+07:00",
+     "createdDate": "2026-10-01T12:56:20+07:00",
+     "updatedDate": "2026-10-01T12:56:20+07:00",
+     "linkYoutube": "",
+     "name": "samsung-galaxy-a37-8gb-128gb639134859962750121.jpg",
+     "url": "https://cdn.tgdd.vn/Products/Images/42/363400/Slider/samsung-galaxy-a37-8gb-128gb639134859962750121.jpg",
+     "displayOrder": 8
+    },
+    {
+     "fromDate": "2026-09-30T00:00:00+07:00",
+     "toDate": "2035-09-30T00:00:00+07:00",
+     "createdDate": "2026-10-01T12:56:20+07:00",
+     "updatedDate": "2026-10-01T12:56:20+07:00",
+     "linkYoutube": "",
+     "name": "samsung-galaxy-a37-8gb-128gb639134859963610191.jpg",
+     "url": "https://cdn.tgdd.vn/Products/Images/42/363400/Slider/samsung-galaxy-a37-8gb-128gb639134859963610191.jpg",
+     "displayOrder": 9
+    },
+    {
+     "fromDate": "2026-09-30T00:00:00+07:00",
+     "toDate": "2035-09-30T00:00:00+07:00",
+     "createdDate": "2026-10-01T12:56:20+07:00",
+     "updatedDate": "2026-10-01T12:56:20+07:00",
+     "linkYoutube": "",
+     "name": "samsung-galaxy-a37-8gb-128gb639134859964490048.jpg",
+     "url": "https://cdn.tgdd.vn/Products/Images/42/363400/Slider/samsung-galaxy-a37-8gb-128gb639134859964490048.jpg",
+     "displayOrder": 10
+    },
+    {
+     "fromDate": "2026-09-30T00:00:00+07:00",
+     "toDate": "2035-09-30T00:00:00+07:00",
+     "createdDate": "2026-10-01T12:56:20+07:00",
+     "updatedDate": "2026-10-01T12:56:20+07:00",
+     "linkYoutube": "",
+     "name": "samsung-galaxy-a37-8gb-128gb639134859969487264.jpg",
+     "url": "https://cdn.tgdd.vn/Products/Images/42/363400/Slider/samsung-galaxy-a37-8gb-128gb639134859969487264.jpg",
+     "displayOrder": 11
+    }
+   ],
+   "productVariantName": "8GB/128GB",
+   "supermarketGalleryList": [],
+   "superMarketVideo": ""
+  },
+  {
+   "productCode": "0131491005158",
+   "avatar": "https://cdnv2.tgdd.vn/pim/cdn/images/202610/samsung-galaxy-a37-5g-trang-thumb215219.jpg",
+   "lstItem": [
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363399/samsung-galaxy-a37-white-1-639095994351538021.jpg"
+    },
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363399/samsung-galaxy-a37-white-2-639095994360633973.jpg"
+    },
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363399/samsung-galaxy-a37-white-3-639095994368879720.jpg"
+    },
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363399/samsung-galaxy-a37-white-4-639095994375713375.jpg"
+    },
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363399/samsung-galaxy-a37-white-5-639095994382028863.jpg"
+    },
+    {
+     "url": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/363399/samsung-galaxy-a37-tem-99-639104639514445352.jpg"
+    }
+   ],
+   "sliders": [
+    {
+     "fromDate": "2026-06-20T00:00:00+07:00",
+     "toDate": "2036-06-30T00:00:00+07:00",
+     "createdDate": "2026-06-22T22:46:45+07:00",
+     "updatedDate": "2026-06-22T22:46:45+07:00",
+     "linkYoutube": "",
+     "name": "samsung-galaxy-a37-8gb-256gb639134860032300619.jpg",
+     "url": "https://cdn.tgdd.vn/Products/Images/42/363399/Slider/samsung-galaxy-a37-8gb-256gb639134860032300619.jpg",
+     "displayOrder": 1
+    },
+    {
+     "fromDate": "2026-09-30T00:00:00+07:00",
+     "toDate": "2035-09-30T00:00:00+07:00",
+     "createdDate": "2026-10-01T12:56:20+07:00",
+     "updatedDate": "2026-10-01T12:56:20+07:00",
+     "linkYoutube": "",
+     "name": "samsung-galaxy-a37-8gb-256gb639134860032300619.jpg",
+     "url": "https://cdn.tgdd.vn/Products/Images/42/363399/Slider/samsung-galaxy-a37-8gb-256gb639134860032300619.jpg",
+     "displayOrder": 5
+    },
+    {
+     "fromDate": "2026-09-30T00:00:00+07:00",
+     "toDate": "2035-09-30T00:00:00+07:00",
+     "createdDate": "2026-10-01T12:56:20+07:00",
+     "updatedDate": "2026-10-01T12:56:20+07:00",
+     "linkYoutube": "",
+     "name": "samsung-galaxy-a37-8gb-256gb639134860036950550.jpg",
+     "url": "https://cdn.tgdd.vn/Products/Images/42/363399/Slider/samsung-galaxy-a37-8gb-256gb639134860036950550.jpg",
+     "displayOrder": 6
+    },
+    {
+     "fromDate": "2026-09-30T00:00:00+07:00",
+     "toDate": "2035-09-30T00:00:00+07:00",
+     "createdDate": "2026-10-01T12:56:20+07:00",
+     "updatedDate": "2026-10-01T12:56:20+07:00",
+     "linkYoutube": "",
+     "name": "samsung-galaxy-a37-8gb-256gb639134860039500633.jpg",
+     "url": "https://cdn.tgdd.vn/Products/Images/42/363399/Slider/samsung-galaxy-a37-8gb-256gb639134860039500633.jpg",
+     "displayOrder": 7
+    },
+    {
+     "fromDate": "2026-09-30T00:00:00+07:00",
+     "toDate": "2035-09-30T00:00:00+07:00",
+     "createdDate": "2026-10-01T12:56:20+07:00",
+     "updatedDate": "2026-10-01T12:56:20+07:00",
+     "linkYoutube": "",
+     "name": "samsung-galaxy-a37-8gb-256gb639134860044520530.jpg",
+     "url": "https://cdn.tgdd.vn/Products/Images/42/363399/Slider/samsung-galaxy-a37-8gb-256gb639134860044520530.jpg",
+     "displayOrder": 8
+    },
+    {
+     "fromDate": "2026-09-30T00:00:00+07:00",
+     "toDate": "2035-09-30T00:00:00+07:00",
+     "createdDate": "2026-10-01T12:56:20+07:00",
+     "updatedDate": "2026-10-01T12:56:20+07:00",
+     "linkYoutube": "",
+     "name": "samsung-galaxy-a37-8gb-256gb639134860045520580.jpg",
+     "url": "https://cdn.tgdd.vn/Products/Images/42/363399/Slider/samsung-galaxy-a37-8gb-256gb639134860045520580.jpg",
+     "displayOrder": 9
+    },
+    {
+     "fromDate": "2026-09-30T00:00:00+07:00",
+     "toDate": "2035-09-30T00:00:00+07:00",
+     "createdDate": "2026-10-01T12:56:20+07:00",
+     "updatedDate": "2026-10-01T12:56:20+07:00",
+     "linkYoutube": "",
+     "name": "samsung-galaxy-a37-8gb-256gb639134860046450705.jpg",
+     "url": "https://cdn.tgdd.vn/Products/Images/42/363399/Slider/samsung-galaxy-a37-8gb-256gb639134860046450705.jpg",
+     "displayOrder": 10
+    },
+    {
+     "fromDate": "2026-09-30T00:00:00+07:00",
+     "toDate": "2035-09-30T00:00:00+07:00",
+     "createdDate": "2026-10-01T12:56:20+07:00",
+     "updatedDate": "2026-10-01T12:56:20+07:00",
+     "linkYoutube": "",
+     "name": "samsung-galaxy-a37-8gb-256gb639134860050770781.jpg",
+     "url": "https://cdn.tgdd.vn/Products/Images/42/363399/Slider/samsung-galaxy-a37-8gb-256gb639134860050770781.jpg",
+     "displayOrder": 11
+    }
+   ],
+   "productVariantName": "8GB/256GB",
+   "supermarketGalleryList": [],
+   "superMarketVideo": ""
+  }
+ ],
+ "serverName": "tmdt-catalog-busapi-u22-90-182",
+ "sessionId": "",
+ "externalmessage": "",
+ "requestId": "",
+ "serverTime": "2026-11-09T15:17:56.2296933+07:00"
+}
