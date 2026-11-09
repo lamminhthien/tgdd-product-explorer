@@ -65,6 +65,34 @@
   .product-card .pname { font-weight: 600; font-size: 13px; }
   .product-card .price { font-size: 15px; }
   .product-card .meta { font-size: 12px; }
+  .range-group { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+  .range-group input { width: 90px; }
+  .seg { display: flex; }
+  .seg button { border-radius: 0; }
+  .seg button:first-child { border-radius: 8px 0 0 8px; }
+  .seg button:last-child { border-radius: 0 8px 8px 0; }
+  .seg button + button { margin-left: -1px; }
+  .ghost.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .icon { background: transparent; color: var(--muted); padding: 2px 6px; font-size: 12px; line-height: 1.2; border-radius: 6px; }
+  .icon.on { color: var(--accent); background: #e8f0fe; }
+  .sentinel { justify-content: center; padding: 16px 0 4px; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+  .product-table { min-width: 960px; font-size: 13px; }
+  .product-table th { text-align: left; background: #fafafa; color: var(--muted); font-weight: 600; font-size: 12px;
+                      padding: 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .product-table td { white-space: nowrap; }
+  .product-table td:first-child { white-space: normal; min-width: 240px; }
+  .product-table td.num { text-align: right; }
+  .product-table td img { width: 40px; height: 40px; object-fit: contain; vertical-align: middle; margin-right: 8px;
+                          border-radius: 6px; background: #fafafa; }
+  .product-table tbody tr { cursor: pointer; }
+  .product-table tbody tr:hover { background: #f5f8ff; }
+  .th-head { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+  .th-filter { margin-top: 6px; font-weight: 400; }
+  .th-filter input, .th-filter select { width: 100%; min-width: 0; padding: 4px 6px; font-size: 12px; }
+  .th-filter .range-group { flex-direction: column; align-items: stretch; gap: 4px; }
+  .th-filter .range-group input { width: 100%; }
+  .th-filter .range-group span { display: none; }
   @media (max-width: 640px) {
     .hero, .summary { grid-template-columns: 1fr; }
   }
@@ -89,7 +117,7 @@
       </label>
       <label>Nguồn dữ liệu
         <select id="source">
-          <option value="live">Live (qua server.py)</option>
+          <option value="live">Live (qua Node.js /api/tgdd)</option>
           <option value="har">Dữ liệu đã lưu từ HAR</option>
         </select>
       </label>
@@ -111,15 +139,39 @@
   <!-- Danh sách sản phẩm -->
   <section id="list" class="panel">
     <div class="filters">
-      <input type="text" id="nameFilter" placeholder="Tìm theo tên sản phẩm" style="width:260px">
+      <input type="text" id="nameFilter" data-f="name" placeholder="Tìm theo tên sản phẩm" style="width:260px">
       <button class="ghost" id="reloadList">Tải lại</button>
+      <div class="seg">
+        <button class="ghost on" data-view="cards">Thẻ</button>
+        <button class="ghost" data-view="table">Bảng</button>
+      </div>
+      <button class="ghost hidden" id="exportBtn">Xuất Excel</button>
       <span class="meta" id="listInfo"></span>
     </div>
     <div id="brandChips" class="chips"></div>
-    <div id="productGrid" class="product-grid"></div>
-    <div style="margin-top:12px">
-      <button class="ghost" id="loadMoreProducts">Tải thêm sản phẩm</button>
+    <div class="filters">
+      <div class="range-group"><span>Đã bán</span>
+        <input type="number" min="0" data-f="sold.min" placeholder="Từ"><span>–</span>
+        <input type="number" min="0" data-f="sold.max" placeholder="Đến">
+      </div>
+      <div class="range-group"><span>Lượt đánh giá</span>
+        <input type="number" min="0" data-f="reviews.min" placeholder="Từ"><span>–</span>
+        <input type="number" min="0" data-f="reviews.max" placeholder="Đến">
+      </div>
+      <div class="range-group"><span>Giá (triệu ₫)</span>
+        <input type="number" min="0" step="0.1" data-f="price.min" placeholder="Từ"><span>–</span>
+        <input type="number" min="0" step="0.1" data-f="price.max" placeholder="Đến">
+      </div>
+      <button class="ghost" id="clearFilters">Xóa bộ lọc</button>
     </div>
+    <div id="productGrid" class="product-grid"></div>
+    <div id="tableWrap" class="table-wrap hidden">
+      <table class="product-table">
+        <thead id="tableHead"></thead>
+        <tbody id="productRows"></tbody>
+      </table>
+    </div>
+    <div id="listSentinel" class="meta sentinel"></div>
   </section>
 
   <!-- Chi tiết -->
@@ -189,6 +241,7 @@
   </section>
 </main>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 const fmtVND = (n) => (n || 0).toLocaleString('vi-VN') + ' ₫';
@@ -207,13 +260,18 @@ const HAR_FILES = {
   'Cate/GetproductCateV2': 'data/product-list.json',
 };
 
-async function callApi(endpoint, { method = 'GET', query = {}, body } = {}) {
-  if ($('source').value === 'har') {
-    // HAR fixtures are static snapshots: filters and paging do not change them.
-    const res = await fetch(HAR_FILES[endpoint]);
-    if (!res.ok) throw new Error('Không đọc được ' + HAR_FILES[endpoint]);
-    return res.json();
-  }
+// Endpoint live bị lỗi và đang dùng HAR thay thế: endpoint -> thông báo lỗi.
+const liveFallbacks = new Map();
+const LIST_ENDPOINT = 'Cate/GetproductCateV2';
+
+async function readHar(endpoint) {
+  // HAR fixtures are static snapshots: filters and paging do not change them.
+  const res = await fetch(HAR_FILES[endpoint]);
+  if (!res.ok) throw new Error('Không đọc được ' + HAR_FILES[endpoint]);
+  return res.json();
+}
+
+async function callLive(endpoint, { method, query, body }) {
   const qs = new URLSearchParams(query).toString();
   const url = `/api/tgdd/${endpoint}${qs ? '?' + qs : ''}`;
   const res = await fetch(url, {
@@ -225,6 +283,27 @@ async function callApi(endpoint, { method = 'GET', query = {}, body } = {}) {
   if (!res.ok) throw new Error(`${endpoint}: HTTP ${res.status} ${json.error || ''}`);
   if (json.code !== 0) throw new Error(`${endpoint}: code ${json.code} ${json.message || json.errormessage || ''}`);
   return json;
+}
+
+async function callApi(endpoint, { method = 'GET', query = {}, body } = {}) {
+  if ($('source').value === 'har') return readHar(endpoint);
+  try {
+    const json = await callLive(endpoint, { method, query, body });
+    liveFallbacks.delete(endpoint);
+    return json;
+  } catch (err) {
+    // Live lỗi (ví dụ upstream chặn server): dùng HAR đã lưu và ghi nhận để hiển thị.
+    if (!HAR_FILES[endpoint]) throw err;
+    liveFallbacks.set(endpoint, err.message);
+    return readHar(endpoint);
+  }
+}
+
+// Thông báo khi chi tiết/đánh giá đang lấy từ HAR vì live lỗi; null nếu không có.
+function detailFallbackNote() {
+  const entry = [...liveFallbacks].find(([endpoint]) => endpoint !== LIST_ENDPOINT);
+  if (!entry) return null;
+  return `Live lỗi (${entry[1]}), đang hiển thị dữ liệu HAR đã lưu. Dữ liệu này là ảnh chụp cũ, có thể không khớp mã sản phẩm bạn nhập.`;
 }
 
 function setStatus(text) { $('status').textContent = text; }
@@ -388,8 +467,76 @@ async function loadImageCount(modelCode, productCode, sellerId, provinceId) {
 
 // ---------- Danh sách sản phẩm (điện thoại, danh mục cateId 13) ----------
 const LIST_PAGE_SIZE = 20;
-const list = { page: 0, products: [], seen: new Set(), brand: '', done: false };
+const list = { page: 0, products: [], seen: new Set(), done: false };
 let listBusy = false;
+let listView = 'cards';        // 'cards' | 'table'
+let listSort = null;           // { key, dir: 'asc' | 'desc' } hoặc null
+const openFilters = new Set(); // các cột đang mở ô lọc trong bảng
+
+// "Đã bán 5,4k" → 5400; "Đã bán 398" → 398.
+function parseSold(s) {
+  const m = String(s ?? '').match(/(\d+(?:[.,]\d+)?)\s*(k|tr)?/i);
+  if (!m) return 0;
+  const unit = (m[2] || '').toLowerCase();
+  return Math.round(Number(m[1].replace(',', '.')) * (unit === 'k' ? 1e3 : unit === 'tr' ? 1e6 : 1));
+}
+
+const priceOf = (p) => p.productPrices?.[0] || {};
+
+// Cột của bảng. value: giá trị để sắp xếp, lọc và xuất Excel.
+// scale: ô lọc nhập theo đơn vị khác (giá nhập theo triệu ₫).
+const COLUMNS = [
+  { key: 'name', label: 'Sản phẩm', type: 'text', value: (p) => p.name || '' },
+  { key: 'brand', label: 'Thương hiệu', type: 'select', value: (p) => p.brand?.brandName || '' },
+  { key: 'price', label: 'Giá bán', type: 'num', scale: 1e6, unit: 'triệu ₫', value: (p) => priceOf(p).price || 0, show: (p) => fmtVND(priceOf(p).price) },
+  { key: 'sysPrice', label: 'Giá gốc', type: 'num', scale: 1e6, unit: 'triệu ₫', value: (p) => priceOf(p).sysPrice || 0, show: (p) => fmtVND(priceOf(p).sysPrice) },
+  { key: 'discount', label: 'Giảm', type: 'num', unit: '%', value: (p) => priceOf(p).discountPercent || 0, show: (p) => `${priceOf(p).discountPercent || 0}%` },
+  { key: 'sold', label: 'Đã bán', type: 'num', value: (p) => parseSold(p.totalSold), show: (p) => (p.totalSold || '').replace('Đã bán ', '') },
+  { key: 'reviews', label: 'Lượt đánh giá', type: 'num', value: (p) => p.totalRate || 0, show: (p) => (p.totalRate || 0).toLocaleString('vi-VN') },
+  { key: 'rate', label: 'Điểm', type: 'num', value: (p) => p.rate || 0, show: (p) => (p.rate ?? 0).toFixed(1) },
+  { key: 'code', label: 'Mã SP', type: 'text', value: (p) => p.productCode || '' },
+];
+
+// Bộ lọc dùng chung cho cả hai chế độ xem. Cột chữ/chọn là chuỗi, cột số là { min, max } (null = không giới hạn).
+const flt = {};
+function resetFilters() {
+  COLUMNS.forEach((c) => { flt[c.key] = c.type === 'num' ? { min: null, max: null } : ''; });
+}
+resetFilters();
+
+function isActive(c) {
+  const f = flt[c.key];
+  return c.type === 'num' ? f.min != null || f.max != null : f !== '';
+}
+
+function matches(p) {
+  return COLUMNS.every((c) => {
+    const f = flt[c.key];
+    const v = c.value(p);
+    if (c.type === 'num') {
+      const x = v / (c.scale || 1);
+      return (f.min == null || x >= f.min) && (f.max == null || x <= f.max);
+    }
+    if (!f) return true;
+    return c.type === 'select' ? v === f : normalize(v).includes(normalize(f));
+  });
+}
+
+function visibleProducts() {
+  const items = list.products.filter(matches);
+  if (!listSort) return items;
+  const col = COLUMNS.find((c) => c.key === listSort.key);
+  const dir = listSort.dir === 'asc' ? 1 : -1;
+  return items.sort((a, b) => {
+    const x = col.value(a);
+    const y = col.value(b);
+    return (typeof x === 'number' ? x - y : String(x).localeCompare(String(y), 'vi')) * dir;
+  });
+}
+
+function brandNames() {
+  return [...new Set(list.products.map((p) => p.brand?.brandName).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'vi'));
+}
 
 // Bỏ dấu tiếng Việt để tìm kiếm không phân biệt dấu.
 function normalize(s) {
@@ -399,8 +546,10 @@ function normalize(s) {
 async function loadProducts(reset) {
   if (listBusy || (list.done && !reset)) return;
   listBusy = true;
+  $('listSentinel').textContent = 'Đang tải thêm sản phẩm...';
+  let failed = false;
   try {
-    if (reset) Object.assign(list, { page: 0, products: [], seen: new Set(), brand: '', done: false });
+    if (reset) Object.assign(list, { page: 0, products: [], seen: new Set(), done: false });
     if ($('source').value === 'har' && list.page > 0) {
       list.done = true; // Fixture HAR chỉ có một trang.
     } else {
@@ -416,50 +565,143 @@ async function loadProducts(reset) {
       items.forEach((p) => {
         if (!list.seen.has(p.productCode)) { list.seen.add(p.productCode); list.products.push(p); }
       });
-      list.done = items.length === 0; // Thứ tự phân trang không ổn định, nên loại trùng theo productCode.
+      // HAR fallback chỉ có một trang nên dừng luôn, nếu không sẽ tải lặp cùng dữ liệu.
+      list.done = items.length === 0 || liveFallbacks.has(LIST_ENDPOINT); // Thứ tự phân trang không ổn định, nên loại trùng theo productCode.
     }
-    renderBrandChips();
-    renderProductGrid();
-    $('listInfo').textContent = `Đã tải ${list.products.length} sản phẩm${list.done ? ' (hết)' : ''}`;
+    renderHeadSafe();
+    renderList();
   } catch (err) {
+    failed = true;
     setError(`Lỗi danh sách sản phẩm: ${err.message}`);
   } finally {
     listBusy = false;
-    $('loadMoreProducts').disabled = list.done;
+    $('listSentinel').textContent = list.done ? 'Đã hiển thị hết sản phẩm.' : 'Cuộn xuống để xem thêm sản phẩm.';
+    if (!failed) maybeLoadMore();
   }
+}
+
+// Khi nội dung chưa lấp đầy màn hình (hoặc đang lọc), tự tải thêm cho đến khi đủ.
+function maybeLoadMore() {
+  if (!$('list').offsetParent) return; // tab sản phẩm đang ẩn
+  if ($('listSentinel').getBoundingClientRect().top < window.innerHeight + 300) loadProducts(false);
 }
 
 function renderBrandChips() {
   const counts = new Map();
   list.products.forEach((p) => {
-    const b = p.brand || {};
-    if (!b.brandCode) return;
-    const cur = counts.get(b.brandCode) || { name: b.brandName, count: 0 };
-    cur.count += 1;
-    counts.set(b.brandCode, cur);
+    const name = p.brand?.brandName;
+    if (name) counts.set(name, (counts.get(name) || 0) + 1);
   });
-  const chips = [`<button class="chip ${list.brand === '' ? 'active' : ''}" data-brand="">Tất cả (${list.products.length})</button>`];
-  [...counts.entries()].sort((a, b) => b[1].count - a[1].count).forEach(([code, b]) => {
-    chips.push(`<button class="chip ${list.brand === code ? 'active' : ''}" data-brand="${escapeHtml(code)}">${escapeHtml(b.name)} (${b.count})</button>`);
+  const chips = [`<button class="chip ${flt.brand === '' ? 'active' : ''}" data-brand="">Tất cả (${list.products.length})</button>`];
+  [...counts.entries()].sort((a, b) => b[1] - a[1]).forEach(([name, count]) => {
+    chips.push(`<button class="chip ${flt.brand === name ? 'active' : ''}" data-brand="${escapeHtml(name)}">${escapeHtml(name)} (${count})</button>`);
   });
   $('brandChips').innerHTML = chips.join('');
 }
 
-function renderProductGrid() {
-  const q = normalize($('nameFilter').value.trim());
-  const items = list.products.filter((p) =>
-    (!list.brand || p.brand?.brandCode === list.brand) && (!q || normalize(p.name).includes(q)));
-  $('productGrid').innerHTML = items.map((p) => {
-    const price = p.productPrices?.[0] || {};
+function cardHtml(p) {
+  const price = priceOf(p);
+  return `
+    <button class="product-card" data-code="${escapeHtml(p.productCode)}" data-model="${escapeHtml(p.id)}">
+      <img loading="lazy" src="${escapeHtml(p.avatar)}" alt="">
+      <div class="pname">${escapeHtml(p.name)}</div>
+      <div class="price">${price.price ? fmtVND(price.price) : 'Chưa có giá'}</div>
+      ${price.sysPrice > price.price ? `<div class="old">${fmtVND(price.sysPrice)}</div>` : ''}
+      <div class="meta">★ ${p.rate ?? '–'} · ${escapeHtml(p.totalSold || '')} · ${(p.totalRate || 0).toLocaleString('vi-VN')} đánh giá</div>
+    </button>`;
+}
+
+function tableRowHtml(p) {
+  const cells = COLUMNS.map((c) => {
+    if (c.key === 'name') return `<td><img loading="lazy" src="${escapeHtml(p.avatar)}" alt="">${escapeHtml(p.name)}</td>`;
+    const text = c.show ? c.show(p) : c.value(p);
+    return `<td class="${c.type === 'num' ? 'num' : ''}">${escapeHtml(text)}</td>`;
+  }).join('');
+  return `<tr data-code="${escapeHtml(p.productCode)}" data-model="${escapeHtml(p.id)}">${cells}</tr>`;
+}
+
+function filterControl(c) {
+  if (c.type === 'text') return `<input type="text" data-f="${c.key}" placeholder="Chứa...">`;
+  if (c.type === 'select') {
+    const options = brandNames().map((n) => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
+    return `<select data-f="${c.key}"><option value="">Tất cả</option>${options}</select>`;
+  }
+  return `<div class="range-group">
+      <input type="number" min="0" data-f="${c.key}.min" placeholder="Từ"><span>–</span>
+      <input type="number" min="0" data-f="${c.key}.max" placeholder="Đến">
+    </div>`;
+}
+
+function renderTableHead() {
+  $('tableHead').innerHTML = `<tr>${COLUMNS.map((c) => {
+    const sorted = listSort?.key === c.key;
+    const open = openFilters.has(c.key);
+    const arrow = !sorted ? '⇅' : listSort.dir === 'asc' ? '▲' : '▼';
     return `
-      <button class="product-card" data-code="${escapeHtml(p.productCode)}" data-model="${escapeHtml(p.id)}">
-        <img loading="lazy" src="${escapeHtml(p.avatar)}" alt="">
-        <div class="pname">${escapeHtml(p.name)}</div>
-        <div class="price">${price.price ? fmtVND(price.price) : 'Chưa có giá'}</div>
-        ${price.sysPrice > price.price ? `<div class="old">${fmtVND(price.sysPrice)}</div>` : ''}
-        <div class="meta">★ ${p.rate ?? '–'} · ${escapeHtml(p.totalSold || '')}</div>
-      </button>`;
-  }).join('') || '<p class="meta">Không có sản phẩm phù hợp.</p>';
+      <th>
+        <div class="th-head">
+          <span>${escapeHtml(c.label)}</span>
+          <button class="icon ${sorted ? 'on' : ''}" data-sort="${c.key}" title="Sắp xếp">${arrow}</button>
+          <button class="icon ${open || isActive(c) ? 'on' : ''}" data-filter="${c.key}" title="Lọc">⚲</button>
+        </div>
+        ${open ? `<div class="th-filter">${filterControl(c)}</div>` : ''}
+      </th>`;
+  }).join('')}</tr>`;
+}
+
+// Không dựng lại tiêu đề bảng khi người dùng đang gõ trong một ô lọc của bảng.
+function renderHeadSafe() {
+  if (!$('tableHead').contains(document.activeElement)) renderTableHead();
+}
+
+// Ô lọc nào cũng được đồng bộ theo trạng thái, trừ ô đang được gõ.
+function syncInputs() {
+  document.querySelectorAll('[data-f]').forEach((el) => {
+    if (el === document.activeElement) return;
+    const [key, bound] = el.dataset.f.split('.');
+    el.value = (bound ? flt[key][bound] : flt[key]) ?? '';
+  });
+}
+
+function renderList() {
+  renderBrandChips();
+  const items = visibleProducts();
+  if (listView === 'table') {
+    $('productRows').innerHTML = items.map(tableRowHtml).join('')
+      || `<tr><td colspan="${COLUMNS.length}" class="meta">Không có sản phẩm phù hợp.</td></tr>`;
+  } else {
+    $('productGrid').innerHTML = items.map(cardHtml).join('') || '<p class="meta">Không có sản phẩm phù hợp.</p>';
+  }
+  const listFallback = $('source').value === 'live' && liveFallbacks.has(LIST_ENDPOINT) ? ' · dữ liệu HAR đã lưu (live lỗi)' : '';
+  $('listInfo').textContent = `Hiển thị ${items.length}/${list.products.length} sản phẩm đã tải${listFallback}`;
+  syncInputs();
+}
+
+function refresh() {
+  renderHeadSafe();
+  renderList();
+  maybeLoadMore();
+}
+
+// Xuất các dòng đang hiển thị (đã lọc và sắp xếp) ra file .xlsx.
+function exportExcel() {
+  if (!window.XLSX) { setError('Không tải được thư viện Excel (cần kết nối tới cdnjs.cloudflare.com).'); return; }
+  const items = visibleProducts();
+  const header = [...COLUMNS.map((c) => c.label), 'Link'];
+  const rows = items.map((p) => [...COLUMNS.map((c) => c.value(p)), `https://www.thegioididong.com/${p.url}`]);
+  const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
+  ws['!cols'] = header.map((_, i) => ({ wch: i === 0 ? 36 : i === header.length - 1 ? 50 : 16 }));
+  ws['!autofilter'] = { ref: XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: rows.length, c: header.length - 1 } }) };
+  COLUMNS.forEach((c, col) => {
+    if (c.key !== 'price' && c.key !== 'sysPrice') return;
+    rows.forEach((_, r) => {
+      const cell = ws[XLSX.utils.encode_cell({ r: r + 1, c: col })];
+      if (cell) cell.z = '#,##0';
+    });
+  });
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Sản phẩm');
+  XLSX.writeFile(wb, `tgdd-san-pham-${new Date().toISOString().slice(0, 10)}.xlsx`);
 }
 
 // ---------- Form ----------
@@ -478,7 +720,7 @@ $('search').addEventListener('submit', async (e) => {
     loadImageCount(modelCode, productCode, sellerId, provinceId);
     const note = $('source').value === 'har'
       ? 'Đang dùng dữ liệu đã lưu từ HAR (chỉ có 2 đánh giá mẫu, bộ lọc không áp dụng).'
-      : `Đã tải lúc ${new Date().toLocaleTimeString('vi-VN')}.`;
+      : detailFallbackNote() || `Đã tải lúc ${new Date().toLocaleTimeString('vi-VN')}.`;
     setStatus(note);
   } catch (err) {
     setStatus('');
@@ -492,24 +734,81 @@ $('applyFilters').addEventListener('click', () => loadReviews($('modelCode').val
 $('loadMore').addEventListener('click', () => loadReviews($('modelCode').value.trim(), false));
 
 $('reloadList').addEventListener('click', () => loadProducts(true));
-$('loadMoreProducts').addEventListener('click', () => loadProducts(false));
-$('nameFilter').addEventListener('input', renderProductGrid);
+$('exportBtn').addEventListener('click', exportExcel);
+$('clearFilters').addEventListener('click', () => {
+  resetFilters();
+  listSort = null;
+  refresh();
+});
+
+// Ô lọc (tên, khoảng bán/đánh giá/giá, ô lọc trong bảng) đều đi qua data-f.
+function onFilterInput(e) {
+  const path = e.target.dataset.f;
+  if (!path) return;
+  const [key, bound] = path.split('.');
+  if (bound) flt[key][bound] = e.target.value === '' ? null : Number(e.target.value);
+  else flt[key] = e.target.value;
+  refresh();
+}
+$('list').addEventListener('input', onFilterInput);
+
 $('brandChips').addEventListener('click', (e) => {
   const chip = e.target.closest('.chip');
   if (!chip) return;
-  list.brand = chip.dataset.brand;
-  renderBrandChips();
-  renderProductGrid();
+  flt.brand = chip.dataset.brand;
+  refresh();
 });
+
+document.querySelectorAll('[data-view]').forEach((btn) => btn.addEventListener('click', () => {
+  listView = btn.dataset.view;
+  document.querySelectorAll('[data-view]').forEach((b) => b.classList.toggle('on', b === btn));
+  $('productGrid').classList.toggle('hidden', listView !== 'cards');
+  $('tableWrap').classList.toggle('hidden', listView !== 'table');
+  $('exportBtn').classList.toggle('hidden', listView !== 'table');
+  refresh();
+}));
+
+// Nút sắp xếp (▲ ▼ ⇅) và nút lọc (⚲) trên tiêu đề cột.
+$('tableHead').addEventListener('click', (e) => {
+  const sortBtn = e.target.closest('[data-sort]');
+  const filterBtn = e.target.closest('[data-filter]');
+  if (sortBtn) {
+    const key = sortBtn.dataset.sort;
+    if (listSort?.key !== key) listSort = { key, dir: 'asc' };
+    else if (listSort.dir === 'asc') listSort = { key, dir: 'desc' };
+    else listSort = null;
+  }
+  if (filterBtn) {
+    const key = filterBtn.dataset.filter;
+    if (openFilters.has(key)) openFilters.delete(key);
+    else openFilters.add(key);
+  }
+  if (sortBtn || filterBtn) {
+    renderTableHead();
+    refresh();
+  }
+});
+
 // Bấm sản phẩm: điền product/model code, mở tab chi tiết và tải dữ liệu.
-$('productGrid').addEventListener('click', (e) => {
-  const card = e.target.closest('.product-card');
-  if (!card) return;
-  $('productCode').value = card.dataset.code;
-  $('modelCode').value = card.dataset.model;
+function openProduct(productCode, modelCode) {
+  $('productCode').value = productCode;
+  $('modelCode').value = modelCode;
   document.querySelector('.tab[data-tab="detail"]').click();
   $('search').requestSubmit();
+}
+$('productGrid').addEventListener('click', (e) => {
+  const card = e.target.closest('.product-card');
+  if (card) openProduct(card.dataset.code, card.dataset.model);
 });
+$('productRows').addEventListener('click', (e) => {
+  const row = e.target.closest('tr[data-code]');
+  if (row) openProduct(row.dataset.code, row.dataset.model);
+});
+
+// Cuộn xuống cuối danh sách thì tự tải thêm, không cần bấm nút.
+new IntersectionObserver((entries) => {
+  if (entries.some((e) => e.isIntersecting)) loadProducts(false);
+}, { rootMargin: '300px 0px' }).observe($('listSentinel'));
 
 loadProducts(true);
 </script>
